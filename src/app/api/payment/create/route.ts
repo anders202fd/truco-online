@@ -9,9 +9,7 @@ export async function POST(req: NextRequest) {
   try {
     const { amount, userId } = await req.json();
 
-    const preference = new Preference(client);
-
-    const response = await preference.create({
+    const preference = await new Preference(client).create({
       body: {
         items: [
           {
@@ -22,16 +20,16 @@ export async function POST(req: NextRequest) {
           },
         ],
         back_urls: {
-          success: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard?payment=success`,
-          failure: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard?payment=failure`,
+          success: `${process.env.NEXTAUTH_URL}/dashboard?payment=success`,
+          failure: `${process.env.NEXTAUTH_URL}/dashboard?payment=failure`,
         },
         external_reference: userId,
       },
     });
 
-    return NextResponse.json({ init_point: response.init_point });
+    return NextResponse.json({ init_point: preference.init_point });
   } catch (error) {
-    console.error("Erro ao criar pagamento:", error);
+    console.error("❌ Erro ao criar pagamento:", error);
     return NextResponse.json({ error: "Erro ao criar pagamento" }, { status: 500 });
   }
 }
