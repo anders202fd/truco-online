@@ -1,36 +1,23 @@
-import { NextRequest, NextResponse } from "next/server";
-import { MercadoPagoConfig, Preference } from "mercadopago";
-
-// ✅ Inicializa o SDK de forma correta
-const client = new MercadoPagoConfig({
-  accessToken: process.env.MP_ACCESS_TOKEN || "",
-});
-
-export async function POST(req: NextRequest) {
-  try {
-    const { amount, userId } = await req.json();
-
-    const preference = await new Preference(client).create({
-      body: {
-        items: [
-          {
-            title: "Recarga Truco App",
-            quantity: 1,
-            currency_id: "BRL",
-            unit_price: amount,
-          },
-        ],
-        back_urls: {
-          success: `${process.env.NEXTAUTH_URL}/dashboard?payment=success`,
-          failure: `${process.env.NEXTAUTH_URL}/dashboard?payment=failure`,
-        },
-        external_reference: userId,
-      },
-    });
-
-    return NextResponse.json({ init_point: preference.init_point });
-  } catch (error) {
-    console.error("❌ Erro ao criar pagamento:", error);
-    return NextResponse.json({ error: "Erro ao criar pagamento" }, { status: 500 });
+{
+  "name": "truco-online",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "14.2.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "mercadopago": "^2.0.6",
+    "@supabase/supabase-js": "^2.43.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.3"
   }
 }
